@@ -15,9 +15,6 @@
                             :class="room.acceptingMessages ? 'btn-primary' : 'btn-secondary'">
                             {{ room.acceptingMessages ? 'Stop Accepting' : 'Start Accepting' }}
                         </button>
-                        <button @click="showQRModal = true" class="btn btn-primary">
-                            Show QR
-                        </button>
                     </div>
                 </div>
             </div>
@@ -37,8 +34,7 @@
                         }">
                             <p class="text-gray-900">{{ message.content }}</p>
                             <div class="mt-2 flex justify-between items-center">
-                                <span class="text-sm text-gray-500">{{ new Date(message.createdAt).toLocaleString()
-                                    }}</span>
+                                <span class="text-sm text-gray-500">{{ new Date(message.createdAt).toLocaleString() }}</span>
                                 <div class="space-x-2" v-if="message.status === 'pending'">
                                     <button @click="approveMessage(message._id)"
                                         class="btn btn-primary">Approve</button>
@@ -69,30 +65,6 @@
                 </div>
             </div>
         </main>
-
-        <!-- QR Code Modal -->
-        <div v-if="showQRModal" class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center">
-            <div class="bg-white rounded-lg p-6 max-w-md w-full">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-lg font-semibold">Room Access</h3>
-                    <button @click="showQRModal = false" class="text-gray-400 hover:text-gray-500">
-                        <span class="sr-only">Close</span>
-                        <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
-                </div>
-                <div class="text-center">
-                    <qrcode-vue :value="publicRoomUrl" :size="200" level="H" class="mx-auto mb-4" />
-                    <p class="text-sm text-gray-600 mb-2">Scan QR code or use link below:</p>
-                    <div class="flex items-center justify-center space-x-2">
-                        <input type="text" :value="publicRoomUrl" readonly class="input text-sm" />
-                        <button @click="copyUrl" class="btn btn-secondary">Copy</button>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 </template>
 
@@ -100,7 +72,6 @@
 import { ref, onMounted, inject } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import QrcodeVue from 'qrcode.vue'
 import axios from 'axios'
 
 const route = useRoute()
@@ -110,9 +81,6 @@ const socket = inject('socket')
 const room = ref({})
 const messages = ref([])
 const currentMessage = ref(null)
-const showQRModal = ref(false)
-
-const publicRoomUrl = `${window.location.origin}/r/${route.params.id}`
 
 // Fetch room details
 const fetchRoom = async () => {
@@ -202,12 +170,6 @@ const toggleAcceptingMessages = async () => {
     } catch (error) {
         alert(error.response?.data?.message || 'Failed to toggle accepting messages')
     }
-}
-
-const copyUrl = () => {
-    navigator.clipboard.writeText(publicRoomUrl)
-        .then(() => alert('URL copied to clipboard'))
-        .catch(() => alert('Failed to copy URL'))
 }
 
 // Socket events
