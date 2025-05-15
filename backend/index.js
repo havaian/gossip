@@ -25,7 +25,7 @@ app.use(cors())
 app.use(express.json())
 
 // Database connection
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/anonymous-messaging'
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://mongodb:27017/gossip'
 
 mongoose.connect(MONGODB_URI)
     .then(() => console.log('Connected to MongoDB'))

@@ -1,7 +1,7 @@
 {
   "name": "anonymous-messaging-backend",
   "version": "1.0.0",
-  "description": "Backend for anonymous messaging system",
+  "description": "Backend for Gossip MUN",
   "main": "index.js",
   "type": "module",
   "scripts": {

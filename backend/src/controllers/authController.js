@@ -13,6 +13,55 @@ const generateToken = (user) => {
     )
 }
 
+// Create initial users if they don't exist
+export const createInitialUsers = async () => {
+    try {
+        const count = await User.countDocuments()
+        
+        // Only create initial users if no users exist
+        if (count === 0) {
+            console.log('Creating initial users...')
+            
+            const initialUsers = [
+                {
+                    name: 'Admin User',
+                    email: 'admin@gossip.mun.uz',
+                    password: 'Admin123!',
+                    role: 'admin'
+                },
+                {
+                    name: 'Moderator User',
+                    email: 'moderator@gossip.mun.uz',
+                    password: 'Mod123!',
+                    role: 'moderator'
+                },
+                {
+                    name: 'Presenter User',
+                    email: 'presenter@gossip.mun.uz',
+                    password: 'Present123!',
+                    role: 'presenter'
+                }
+            ]
+            
+            // Create users
+            for (const userData of initialUsers) {
+                const existingUser = await User.findOne({ email: userData.email })
+                if (!existingUser) {
+                    const user = new User(userData)
+                    await user.save()
+                    console.log(`Created user: ${userData.email}`)
+                }
+            }
+            
+            console.log('Initial users created successfully')
+        }
+    } catch (error) {
+        console.error('Error creating initial users:', error)
+    }
+}
+
+createInitialUsers();
+
 // Register new user (admin only)
 export const register = async (req, res) => {
     try {
