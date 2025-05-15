@@ -32,8 +32,16 @@ export const getRoomMessages = async (req, res) => {
 
         // Check if user has access to the room
         const user = await User.findById(req.user.id)
-        if (user.role !== 'admin' && !user.assignedRoom.equals(room._id)) {
-            return res.status(403).json({ message: 'Access denied' })
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' })
+        }
+        
+        // Allow access for admin, moderator and presenter roles without checking room assignment
+        if (user.role !== 'admin' && user.role !== 'moderator' && user.role !== 'presenter') {
+            // For any future roles that might be added, check assignment
+            if (!user.assignedRoom || !user.assignedRoom.equals(room._id)) {
+                return res.status(403).json({ message: 'Access denied' })
+            }
         }
 
         // Build query

@@ -39,7 +39,8 @@ app.use((req, res, next) => {
 
 // Routes
 app.use('/api/auth', authRoutes)
-app.use('/api/admin', verifyToken, adminRoutes)
+// Remove the verifyToken middleware here - it's now in the admin routes file
+app.use('/api/admin', adminRoutes)
 app.use('/api/rooms', roomRoutes)
 app.use('/api/public', publicRoutes)
 

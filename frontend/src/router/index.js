@@ -29,7 +29,13 @@ const routes = [
         path: '/room/:id',
         name: 'Room',
         component: () => import('../views/Room.vue'),
-        meta: { requiresAuth: true }
+        meta: { requiresAuth: true, requiresModerator: true }
+    },
+    {
+        path: '/presenter/room/:id',
+        name: 'PresenterRoom',
+        component: () => import('../views/PresenterRoom.vue'),
+        meta: { requiresAuth: true, requiresPresenter: true }
     }
 ]
 
@@ -44,6 +50,10 @@ router.beforeEach((to, from, next) => {
     if (to.meta.requiresAuth && !authStore.isAuthenticated) {
         next('/login')
     } else if (to.meta.requiresAdmin && authStore.user?.role !== 'admin') {
+        next('/')
+    } else if (to.meta.requiresModerator && authStore.user?.role !== 'admin' && authStore.user?.role !== 'moderator') {
+        next('/')
+    } else if (to.meta.requiresPresenter && authStore.user?.role !== 'admin' && authStore.user?.role !== 'presenter') {
         next('/')
     } else if (to.meta.guest && authStore.isAuthenticated) {
         next('/')

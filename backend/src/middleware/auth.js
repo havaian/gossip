@@ -77,7 +77,7 @@ export const isPresenter = async (req, res, next) => {
     }
 }
 
-// Check if user has access to room
+// Check if user has general room access (all roles)
 export const hasRoomAccess = async (req, res, next) => {
     try {
         const roomId = req.params.id
@@ -87,12 +87,12 @@ export const hasRoomAccess = async (req, res, next) => {
             return res.status(404).json({ message: 'User not found' })
         }
 
-        // Admin has access to all rooms
-        if (user.role === 'admin') {
+        // Allow access to all rooms for admins, moderators, and presenters
+        if (user.role === 'admin' || user.role === 'moderator' || user.role === 'presenter') {
             return next()
         }
 
-        // Check if user is assigned to the room
+        // For any other roles (if added in the future), check if user is assigned to the room
         if (!user.assignedRoom || user.assignedRoom.toString() !== roomId) {
             return res.status(403).json({ message: 'You do not have access to this room' })
         }
@@ -100,6 +100,27 @@ export const hasRoomAccess = async (req, res, next) => {
         next()
     } catch (error) {
         console.error('Room access check error:', error)
+        res.status(500).json({ message: 'Server error' })
+    }
+}
+
+// Check if user has moderator access to a room (admins and moderators only)
+export const hasModeratorAccess = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user.id)
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' })
+        }
+
+        // Only admins and moderators can moderate rooms
+        if (user.role !== 'admin' && user.role !== 'moderator') {
+            return res.status(403).json({ message: 'Access denied: Moderator privileges required' })
+        }
+
+        next()
+    } catch (error) {
+        console.error('Moderator access check error:', error)
         res.status(500).json({ message: 'Server error' })
     }
 }

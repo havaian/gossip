@@ -9,20 +9,20 @@ import {
     toggleAcceptingMessages,
     clearAllMessages
 } from '../controllers/roomController.js'
-import { verifyToken, hasRoomAccess, isModerator } from '../middleware/auth.js'
+import { verifyToken, hasRoomAccess, hasModeratorAccess, isModerator } from '../middleware/auth.js'
 
 const router = express.Router()
 
-// Protected routes
-router.get('/:id', verifyToken, getRoomDetails)
-router.get('/:id/messages', verifyToken, hasRoomAccess, getRoomMessages)
+// Routes all authenticated users can access (admin, moderator, presenter)
+router.get('/:id', verifyToken, hasRoomAccess, getRoomDetails)
 router.get('/:id/current-message', verifyToken, hasRoomAccess, getCurrentMessage)
 
-// Moderator routes
-router.patch('/:id/messages/:messageId/approve', verifyToken, hasRoomAccess, isModerator, approveMessage)
-router.patch('/:id/messages/:messageId/reject', verifyToken, hasRoomAccess, isModerator, rejectMessage)
-router.patch('/:id/messages/:messageId/display', verifyToken, hasRoomAccess, isModerator, displayMessage)
-router.patch('/:id/toggle-accepting', verifyToken, hasRoomAccess, isModerator, toggleAcceptingMessages)
-router.delete('/:id/messages', verifyToken, hasRoomAccess, isModerator, clearAllMessages)
+// Routes only moderators and admins can access
+router.get('/:id/messages', verifyToken, hasRoomAccess, hasModeratorAccess, getRoomMessages)
+router.patch('/:id/messages/:messageId/approve', verifyToken, hasRoomAccess, hasModeratorAccess, approveMessage)
+router.patch('/:id/messages/:messageId/reject', verifyToken, hasRoomAccess, hasModeratorAccess, rejectMessage)
+router.patch('/:id/messages/:messageId/display', verifyToken, hasRoomAccess, hasModeratorAccess, displayMessage)
+router.patch('/:id/toggle-accepting', verifyToken, hasRoomAccess, hasModeratorAccess, toggleAcceptingMessages)
+router.delete('/:id/messages', verifyToken, hasRoomAccess, hasModeratorAccess, clearAllMessages)
 
 export default router

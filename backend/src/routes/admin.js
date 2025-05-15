@@ -12,28 +12,26 @@ import {
     updateRoom,
     deleteRoom
 } from '../controllers/adminController.js'
-import { isAdmin } from '../middleware/auth.js'
+import { verifyToken, isAdmin } from '../middleware/auth.js'
 
 const router = express.Router()
 
-// All routes in this file require admin role
-router.use(isAdmin)
+// Verify token for all routes
+router.use(verifyToken)
 
-// Stats
-router.get('/stats', getStats)
-
-// User routes
-router.get('/users', getUsers)
-router.get('/users/:id', getUserById)
-router.post('/users', createUser)
-router.put('/users/:id', updateUser)
-router.delete('/users/:id', deleteUser)
-
-// Room routes
+// Routes that all authenticated users (incl. moderators and presenters) can access
 router.get('/rooms', getRooms)
 router.get('/rooms/:id', getRoomById)
-router.post('/rooms', createRoom)
-router.put('/rooms/:id', updateRoom)
-router.delete('/rooms/:id', deleteRoom)
+
+// Routes that require admin role
+router.get('/stats', isAdmin, getStats)
+router.get('/users', isAdmin, getUsers)
+router.get('/users/:id', isAdmin, getUserById)
+router.post('/users', isAdmin, createUser)
+router.put('/users/:id', isAdmin, updateUser)
+router.delete('/users/:id', isAdmin, deleteUser)
+router.post('/rooms', isAdmin, createRoom)
+router.put('/rooms/:id', isAdmin, updateRoom)
+router.delete('/rooms/:id', isAdmin, deleteRoom)
 
 export default router

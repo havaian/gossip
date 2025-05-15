@@ -10,7 +10,7 @@
                     </div>
                     <div class="flex items-center">
                         <span class="text-gray-700 mr-4">{{ authStore.user.name }}</span>
-                        <button @click="authStore.logout" class="btn btn-secondary">
+                        <button @click="handleLogout" class="btn btn-secondary">
                             Logout
                         </button>
                     </div>
@@ -46,17 +46,48 @@
             </div>
         </main>
 
-        <!-- Moderator/Presenter View -->
-        <main v-else class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <!-- Moderator View -->
+        <main v-else-if="authStore.isModerator" class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
             <div class="px-4 py-6 sm:px-0">
-                <div v-if="assignedRoom" class="border-4 border-gray-200 rounded-lg p-4">
-                    <h2 class="text-2xl font-bold mb-4">Your Room</h2>
-                    <router-link :to="'/room/' + assignedRoom._id" class="btn btn-primary">
-                        Go to Room
-                    </router-link>
+                <h2 class="text-2xl font-bold mb-4">Available Rooms</h2>
+
+                <div v-if="rooms.length > 0" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div v-for="room in rooms" :key="room._id" class="bg-white shadow rounded-lg p-4">
+                        <h3 class="text-lg font-semibold">{{ room.name }}</h3>
+                        <p class="text-gray-600">{{ room.description }}</p>
+                        <div class="mt-4">
+                            <router-link :to="'/room/' + room._id" class="btn btn-primary">
+                                Moderate Room
+                            </router-link>
+                        </div>
+                    </div>
                 </div>
+
                 <div v-else class="text-center py-12">
-                    <h3 class="text-xl text-gray-600">You haven't been assigned to any room yet.</h3>
+                    <h3 class="text-xl text-gray-600">No rooms are available.</h3>
+                </div>
+            </div>
+        </main>
+
+        <!-- Presenter View -->
+        <main v-else-if="authStore.isPresenter" class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            <div class="px-4 py-6 sm:px-0">
+                <h2 class="text-2xl font-bold mb-4">Available Rooms</h2>
+
+                <div v-if="rooms.length > 0" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                    <div v-for="room in rooms" :key="room._id" class="bg-white shadow rounded-lg p-4">
+                        <h3 class="text-lg font-semibold">{{ room.name }}</h3>
+                        <p class="text-gray-600">{{ room.description }}</p>
+                        <div class="mt-4">
+                            <router-link :to="'/presenter/room/' + room._id" class="btn btn-primary">
+                                View Presentation
+                            </router-link>
+                        </div>
+                    </div>
+                </div>
+
+                <div v-else class="text-center py-12">
+                    <h3 class="text-xl text-gray-600">No rooms are available.</h3>
                 </div>
             </div>
         </main>
@@ -92,11 +123,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
+import { useRouter } from 'vue-router'
 import axios from 'axios'
 
+const router = useRouter()
 const authStore = useAuthStore()
 const rooms = ref([])
-const assignedRoom = ref(null)
 const showCreateRoomModal = ref(false)
 const creating = ref(false)
 const newRoom = ref({
@@ -112,19 +144,6 @@ const fetchRooms = async () => {
         rooms.value = response.data.rooms
     } catch (error) {
         console.error('Error fetching rooms:', error)
-    }
-}
-
-const fetchAssignedRoom = async () => {
-    try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/auth/me`, {
-            headers: { Authorization: `Bearer ${authStore.token}` }
-        })
-        if (response.data.assignedRoom) {
-            assignedRoom.value = response.data.assignedRoom
-        }
-    } catch (error) {
-        console.error('Error fetching assigned room:', error)
     }
 }
 
@@ -159,11 +178,13 @@ const deleteRoom = async (roomId) => {
     }
 }
 
+const handleLogout = () => {
+    authStore.logout()
+    router.push('/login')
+}
+
 onMounted(() => {
-    if (authStore.isAdmin) {
-        fetchRooms()
-    } else {
-        fetchAssignedRoom()
-    }
+    // All roles fetch the rooms list
+    fetchRooms()
 })
 </script>
