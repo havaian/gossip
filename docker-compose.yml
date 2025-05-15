@@ -27,6 +27,8 @@ services:
       - "3000:3000"
     env_file:
       - ./.env
+    environment:
+      - CORS_ORIGIN=https://gossip.mun.uz
     depends_on:
       - mongodb
     networks:

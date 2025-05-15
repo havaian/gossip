@@ -58,11 +58,12 @@ app.use((err, req, res, next) => {
 // Set up Socket.IO
 const io = new Server(server, {
     cors: {
-        origin: '*',
-        methods: ['GET', 'POST'],
+        origin: process.env.CORS_ORIGIN || "*",  // Specify allowed origins
+        methods: ["GET", "POST"],
         credentials: true
-    }
-})
+    },
+    path: '/socket.io/'  // Explicitly set the path
+});
 
 // Set up socket handlers
 setupSocketHandlers(io)
