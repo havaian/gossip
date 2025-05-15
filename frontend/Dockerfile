@@ -20,5 +20,5 @@ COPY . .
 
 # EXPOSE 80
 
-# CMD ["nginx", "-g", "daemon off;"]
-CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
+CMD ["nginx", "-g", "daemon off;"]
+# CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
