@@ -7,7 +7,7 @@ deploy:
     - shell
   variables:
     PROJECT_DIR: "/home/root/projects/gossip-mun-uz"
-    GIT_STRATEGY: none  # Prevent automatic checkout
+    GIT_STRATEGY: fetch  # Prevent automatic checkout
   script:
     - echo "Starting deployment..."
     - |
