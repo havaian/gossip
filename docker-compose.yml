@@ -9,9 +9,10 @@ services:
     volumes:
       - mongodb_data:/data/db
     ports:
-      - "127.0.0.1:27017:27017"
+      - "127.0.0.1:${MONGODB_EXPOSE}:${MONGODB_PORT}"
     networks:
       - app-network
+    command: mongod --port ${MONGODB_PORT}
 
   # Backend service
   backend:
@@ -24,11 +25,13 @@ services:
       - ./backend:/usr/src/app
       - /app/node_modules
     ports:
-      - "3000:3000"
+      - "${BACKEND_EXPOSE}:${BACKEND_PORT}"
     env_file:
       - ./.env
     environment:
+      - MONGODB_URI=mongodb://mongodb:${MONGODB_PORT}/gossip
       - CORS_ORIGIN=https://gossip.mun.uz
+      - PORT=${BACKEND_PORT}
     depends_on:
       - mongodb
     networks:
@@ -45,8 +48,8 @@ services:
       - ./frontend:/app
       - /app/node_modules
     ports:
-      - "8080:80"
-      # - "8080:5173"
+      - "${FRONTEND_EXPOSE}:${FRONTEND_PROD_PORT}"
+      # - "${FRONTEND_EXPOSE}:${FRONTEND_DEV_PORT}"
     environment:
       - VITE_API_URL=https://gossip.mun.uz/api
       - VITE_SOCKET_URL=https://gossip.mun.uz
