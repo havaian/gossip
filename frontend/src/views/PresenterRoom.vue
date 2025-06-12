@@ -71,7 +71,7 @@ import { ref, onMounted, inject } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
 import QrcodeVue from 'qrcode.vue'
-import axios from 'axios'
+import axios from '../services/api'
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -86,7 +86,7 @@ const publicRoomUrl = `${window.location.origin}/r/${route.params.id}`
 // Fetch room details
 const fetchRoom = async () => {
     try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/rooms/${route.params.id}`, {
+        const response = await axios.get(`/rooms/${route.params.id}`, {
             headers: { Authorization: `Bearer ${authStore.token}` }
         })
         room.value = response.data
@@ -98,7 +98,7 @@ const fetchRoom = async () => {
 // Fetch current message
 const fetchCurrentMessage = async () => {
     try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/rooms/${route.params.id}/current-message`, {
+        const response = await axios.get(`/rooms/${route.params.id}/current-message`, {
             headers: { Authorization: `Bearer ${authStore.token}` }
         })
         currentMessage.value = response.data

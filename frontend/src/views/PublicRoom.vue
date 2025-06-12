@@ -34,7 +34,7 @@
 <script setup>
 import { ref, onMounted, inject } from 'vue'
 import { useRoute } from 'vue-router'
-import axios from 'axios'
+import axios from '../services/api'
 
 const route = useRoute()
 const socket = inject('socket')
@@ -46,7 +46,7 @@ const submitting = ref(false)
 
 const fetchRoom = async () => {
     try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/public/rooms/${route.params.id}`)
+        const response = await axios.get(`/public/rooms/${route.params.id}`)
         room.value = response.data
     } catch (error) {
         alert(error.response?.data?.message || 'Failed to load room')
@@ -56,7 +56,7 @@ const fetchRoom = async () => {
 const submitMessage = async () => {
     try {
         submitting.value = true
-        await axios.post(`${import.meta.env.VITE_API_URL}/public/rooms/${route.params.id}/message`, {
+        await axios.post(`/public/rooms/${route.params.id}/message`, {
             content: message.value
         })
         message.value = ''

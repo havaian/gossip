@@ -283,7 +283,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useAuthStore } from '../stores/auth'
-import axios from 'axios'
+import axios from '../services/api'
 
 const authStore = useAuthStore()
 
@@ -329,7 +329,7 @@ const presenters = computed(() => {
 
 const fetchStats = async () => {
   try {
-    const response = await axios.get(`${import.meta.env.VITE_API_URL}/admin/stats`, {
+    const response = await axios.get(`/admin/stats`, {
       headers: { Authorization: `Bearer ${authStore.token}` }
     })
     stats.value = response.data
@@ -340,7 +340,7 @@ const fetchStats = async () => {
 
 const fetchRooms = async () => {
   try {
-    const response = await axios.get(`${import.meta.env.VITE_API_URL}/admin/rooms`, {
+    const response = await axios.get(`/admin/rooms`, {
       headers: { Authorization: `Bearer ${authStore.token}` }
     })
     rooms.value = response.data.rooms
@@ -351,7 +351,7 @@ const fetchRooms = async () => {
 
 const fetchUsers = async () => {
   try {
-    const response = await axios.get(`${import.meta.env.VITE_API_URL}/admin/users`, {
+    const response = await axios.get(`/admin/users`, {
       headers: { Authorization: `Bearer ${authStore.token}` }
     })
     users.value = response.data.users
@@ -364,7 +364,7 @@ const createRoom = async () => {
   try {
     loading.value = true
     await axios.post(
-      `${import.meta.env.VITE_API_URL}/admin/rooms`,
+      `/admin/rooms`,
       roomForm.value,
       { headers: { Authorization: `Bearer ${authStore.token}` } }
     )
@@ -391,7 +391,7 @@ const updateRoom = async () => {
   try {
     loading.value = true
     await axios.put(
-      `${import.meta.env.VITE_API_URL}/admin/rooms/${roomForm.value._id}`,
+      `/admin/rooms/${roomForm.value._id}`,
       roomForm.value,
       { headers: { Authorization: `Bearer ${authStore.token}` } }
     )
@@ -409,7 +409,7 @@ const deleteRoom = async (roomId) => {
   if (!confirm('Are you sure you want to delete this room? This will also remove all associated messages.')) return
 
   try {
-    await axios.delete(`${import.meta.env.VITE_API_URL}/admin/rooms/${roomId}`, {
+    await axios.delete(`/admin/rooms/${roomId}`, {
       headers: { Authorization: `Bearer ${authStore.token}` }
     })
     await fetchRooms()
@@ -423,7 +423,7 @@ const createUser = async () => {
   try {
     loading.value = true
     await axios.post(
-      `${import.meta.env.VITE_API_URL}/admin/users`,
+      `/admin/users`,
       userForm.value,
       { headers: { Authorization: `Bearer ${authStore.token}` } }
     )
@@ -448,7 +448,7 @@ const updateUser = async () => {
   try {
     loading.value = true
     await axios.put(
-      `${import.meta.env.VITE_API_URL}/admin/users/${userForm.value._id}`,
+      `/admin/users/${userForm.value._id}`,
       userForm.value,
       { headers: { Authorization: `Bearer ${authStore.token}` } }
     )
@@ -465,7 +465,7 @@ const deleteUser = async (userId) => {
   if (!confirm('Are you sure you want to delete this user?')) return
 
   try {
-    await axios.delete(`${import.meta.env.VITE_API_URL}/admin/users/${userId}`, {
+    await axios.delete(`/admin/users/${userId}`, {
       headers: { Authorization: `Bearer ${authStore.token}` }
     })
     await fetchUsers()

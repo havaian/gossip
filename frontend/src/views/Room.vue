@@ -72,7 +72,7 @@
 import { ref, onMounted, inject } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
-import axios from 'axios'
+import axios from '../services/api'
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -85,7 +85,7 @@ const currentMessage = ref(null)
 // Fetch room details
 const fetchRoom = async () => {
     try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/rooms/${route.params.id}`, {
+        const response = await axios.get(`/rooms/${route.params.id}`, {
             headers: { Authorization: `Bearer ${authStore.token}` }
         })
         room.value = response.data
@@ -97,7 +97,7 @@ const fetchRoom = async () => {
 // Fetch messages
 const fetchMessages = async () => {
     try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/rooms/${route.params.id}/messages`, {
+        const response = await axios.get(`/rooms/${route.params.id}/messages`, {
             headers: { Authorization: `Bearer ${authStore.token}` }
         })
         messages.value = response.data
@@ -109,7 +109,7 @@ const fetchMessages = async () => {
 // Fetch current message
 const fetchCurrentMessage = async () => {
     try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/rooms/${route.params.id}/current-message`, {
+        const response = await axios.get(`/rooms/${route.params.id}/current-message`, {
             headers: { Authorization: `Bearer ${authStore.token}` }
         })
         currentMessage.value = response.data
@@ -122,7 +122,7 @@ const fetchCurrentMessage = async () => {
 const approveMessage = async (messageId) => {
     try {
         await axios.patch(
-            `${import.meta.env.VITE_API_URL}/rooms/${route.params.id}/messages/${messageId}/approve`,
+            `/rooms/${route.params.id}/messages/${messageId}/approve`,
             {},
             { headers: { Authorization: `Bearer ${authStore.token}` } }
         )
@@ -135,7 +135,7 @@ const approveMessage = async (messageId) => {
 const rejectMessage = async (messageId) => {
     try {
         await axios.patch(
-            `${import.meta.env.VITE_API_URL}/rooms/${route.params.id}/messages/${messageId}/reject`,
+            `/rooms/${route.params.id}/messages/${messageId}/reject`,
             {},
             { headers: { Authorization: `Bearer ${authStore.token}` } }
         )
@@ -148,7 +148,7 @@ const rejectMessage = async (messageId) => {
 const displayMessage = async (messageId) => {
     try {
         await axios.patch(
-            `${import.meta.env.VITE_API_URL}/rooms/${route.params.id}/messages/${messageId}/display`,
+            `/rooms/${route.params.id}/messages/${messageId}/display`,
             {},
             { headers: { Authorization: `Bearer ${authStore.token}` } }
         )
@@ -162,7 +162,7 @@ const displayMessage = async (messageId) => {
 const toggleAcceptingMessages = async () => {
     try {
         await axios.patch(
-            `${import.meta.env.VITE_API_URL}/rooms/${route.params.id}/toggle-accepting`,
+            `/rooms/${route.params.id}/toggle-accepting`,
             { acceptingMessages: !room.value.acceptingMessages },
             { headers: { Authorization: `Bearer ${authStore.token}` } }
         )

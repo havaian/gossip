@@ -124,7 +124,7 @@
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
 import { useRouter } from 'vue-router'
-import axios from 'axios'
+import axios from '../services/api'
 
 const router = useRouter()
 const authStore = useAuthStore()
@@ -138,7 +138,7 @@ const newRoom = ref({
 
 const fetchRooms = async () => {
     try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/admin/rooms`, {
+        const response = await axios.get(`/admin/rooms`, {
             headers: { Authorization: `Bearer ${authStore.token}` }
         })
         rooms.value = response.data.rooms
@@ -151,7 +151,7 @@ const createRoom = async () => {
     try {
         creating.value = true
         await axios.post(
-            `${import.meta.env.VITE_API_URL}/admin/rooms`,
+            `/admin/rooms`,
             newRoom.value,
             { headers: { Authorization: `Bearer ${authStore.token}` } }
         )
@@ -169,7 +169,7 @@ const deleteRoom = async (roomId) => {
     if (!confirm('Are you sure you want to delete this room?')) return
 
     try {
-        await axios.delete(`${import.meta.env.VITE_API_URL}/admin/rooms/${roomId}`, {
+        await axios.delete(`/admin/rooms/${roomId}`, {
             headers: { Authorization: `Bearer ${authStore.token}` }
         })
         await fetchRooms()

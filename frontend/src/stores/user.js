@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import axios from 'axios'
+import axios from '../services/api'
 import { useAuthStore } from './auth'
 
 export const useUserStore = defineStore('user', {
@@ -14,7 +14,7 @@ export const useUserStore = defineStore('user', {
             const authStore = useAuthStore()
             try {
                 this.loading = true
-                const response = await axios.get(`${import.meta.env.VITE_API_URL}/admin/users`, {
+                const response = await axios.get(`/admin/users`, {
                     headers: { Authorization: `Bearer ${authStore.token}` }
                 })
                 this.users = response.data.users
@@ -30,8 +30,7 @@ export const useUserStore = defineStore('user', {
             const authStore = useAuthStore()
             try {
                 this.loading = true
-                const response = await axios.post(
-                    `${import.meta.env.VITE_API_URL}/admin/users`,
+                const response = await axios.post(`/admin/users`,
                     userData,
                     { headers: { Authorization: `Bearer ${authStore.token}` } }
                 )
@@ -49,8 +48,7 @@ export const useUserStore = defineStore('user', {
             const authStore = useAuthStore()
             try {
                 this.loading = true
-                const response = await axios.put(
-                    `${import.meta.env.VITE_API_URL}/admin/users/${userId}`,
+                const response = await axios.put(`/admin/users/${userId}`,
                     userData,
                     { headers: { Authorization: `Bearer ${authStore.token}` } }
                 )
@@ -71,7 +69,7 @@ export const useUserStore = defineStore('user', {
             const authStore = useAuthStore()
             try {
                 this.loading = true
-                await axios.delete(`${import.meta.env.VITE_API_URL}/admin/users/${userId}`, {
+                await axios.delete(`/admin/users/${userId}`, {
                     headers: { Authorization: `Bearer ${authStore.token}` }
                 })
                 this.users = this.users.filter(user => user._id !== userId)
