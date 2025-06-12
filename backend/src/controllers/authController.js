@@ -1,131 +1,84 @@
+// backend/src/controllers/authController.js
 import jwt from 'jsonwebtoken'
 import User from '../models/User.js'
 
-// JWT secret
+// JWT secret and expiration
 const JWT_SECRET = process.env.JWT_SECRET || 'your-secret-key'
+const TOKEN_EXPIRY = '24h' // 24 hours to match frontend
 
 // Generate JWT token
 const generateToken = (user) => {
     return jwt.sign(
-        { id: user._id, role: user.role },
+        {
+            id: user._id,
+            role: user.role,
+            email: user.email,
+            iat: Math.floor(Date.now() / 1000) // issued at
+        },
         JWT_SECRET,
-        { expiresIn: '1d' }
+        { expiresIn: TOKEN_EXPIRY }
     )
 }
 
-// Create or recreate initial users - ensures they always exist
+// Decode token to get expiry time
+const getTokenExpiry = (token) => {
+    try {
+        const decoded = jwt.decode(token)
+        return new Date(decoded.exp * 1000) // Convert to milliseconds
+    } catch (error) {
+        return null
+    }
+}
+
+// Create initial users if they don't exist
 export const createInitialUsers = async () => {
     try {
-        console.log('Checking and creating/updating initial users...')
-        
-        const initialUsers = [
-            {
-                name: 'Admin User',
-                email: 'admin@gossip.mun.uz',
-                password: 'Admin123!',
-                role: 'admin'
-            },
-            {
-                name: 'Moderator User',
-                email: 'moderator@gossip.mun.uz',
-                password: 'Mod123!',
-                role: 'moderator'
-            },
-            {
-                name: 'Presenter User',
-                email: 'presenter@gossip.mun.uz',
-                password: 'Present123!',
-                role: 'presenter'
-            }
-        ]
-        
-        // Create or update each initial user
-        for (const userData of initialUsers) {
-            try {
+        const count = await User.countDocuments()
+
+        // Only create initial users if no users exist
+        if (count === 0) {
+            console.log('Creating initial users...')
+
+            const initialUsers = [
+                {
+                    name: 'Admin User',
+                    email: 'admin@gossip.mun.uz',
+                    password: 'Admin123!',
+                    role: 'admin'
+                },
+                {
+                    name: 'Moderator User',
+                    email: 'moderator@gossip.mun.uz',
+                    password: 'Mod123!',
+                    role: 'moderator'
+                },
+                {
+                    name: 'Presenter User',
+                    email: 'presenter@gossip.mun.uz',
+                    password: 'Present123!',
+                    role: 'presenter'
+                }
+            ]
+
+            // Create users
+            for (const userData of initialUsers) {
                 const existingUser = await User.findOne({ email: userData.email })
-                
-                if (existingUser) {
-                    // Update existing user to ensure it has correct role and is active
-                    existingUser.name = userData.name
-                    existingUser.role = userData.role
-                    existingUser.isActive = true
-                    
-                    // Only update password if it's different (this will trigger the pre-save hash)
-                    const isPasswordSame = await existingUser.comparePassword(userData.password)
-                    if (!isPasswordSame) {
-                        existingUser.password = userData.password
-                    }
-                    
-                    await existingUser.save()
-                    console.log(`✅ Updated existing user: ${userData.email}`)
-                } else {
-                    // Create new user
+                if (!existingUser) {
                     const user = new User(userData)
                     await user.save()
-                    console.log(`✅ Created new user: ${userData.email}`)
+                    console.log(`Created user: ${userData.email}`)
                 }
-            } catch (userError) {
-                console.error(`❌ Error processing user ${userData.email}:`, userError.message)
             }
+
+            console.log('Initial users created successfully')
         }
-        
-        console.log('✅ Initial users check completed successfully')
     } catch (error) {
-        console.error('❌ Error in createInitialUsers:', error)
+        console.error('Error creating initial users:', error)
     }
 }
 
-// Alternative version that always recreates the users (use with caution)
-export const recreateInitialUsers = async () => {
-    try {
-        console.log('Recreating initial users (this will delete existing ones)...')
-        
-        const initialUsers = [
-            {
-                name: 'Admin User',
-                email: 'admin@gossip.mun.uz',
-                password: 'Admin123!',
-                role: 'admin'
-            },
-            {
-                name: 'Moderator User',
-                email: 'moderator@gossip.mun.uz',
-                password: 'Mod123!',
-                role: 'moderator'
-            },
-            {
-                name: 'Presenter User',
-                email: 'presenter@gossip.mun.uz',
-                password: 'Present123!',
-                role: 'presenter'
-            }
-        ]
-        
-        // Delete and recreate each user
-        for (const userData of initialUsers) {
-            try {
-                // Delete existing user if it exists
-                await User.deleteOne({ email: userData.email })
-                
-                // Create new user
-                const user = new User(userData)
-                await user.save()
-                console.log(`✅ Recreated user: ${userData.email}`)
-            } catch (userError) {
-                console.error(`❌ Error recreating user ${userData.email}:`, userError.message)
-            }
-        }
-        
-        console.log('✅ Initial users recreation completed successfully')
-    } catch (error) {
-        console.error('❌ Error in recreateInitialUsers:', error)
-    }
-}
-
-// Call the improved function
 createInitialUsers();
 
-// Rest of your existing code...
 // Register new user (admin only)
 export const register = async (req, res) => {
     try {
@@ -150,10 +103,12 @@ export const register = async (req, res) => {
 
         // Generate JWT token
         const token = generateToken(user)
+        const tokenExpiry = getTokenExpiry(token)
 
         res.status(201).json({
             message: 'User registered successfully',
             token,
+            tokenExpiry: tokenExpiry?.toISOString(),
             user: user.toJSON()
         })
     } catch (error) {
@@ -166,6 +121,11 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
     try {
         const { email, password } = req.body
+
+        // Validate input
+        if (!email || !password) {
+            return res.status(400).json({ message: 'Email and password are required' })
+        }
 
         // Find user by email
         const user = await User.findOne({ email })
@@ -190,10 +150,12 @@ export const login = async (req, res) => {
 
         // Generate JWT token
         const token = generateToken(user)
+        const tokenExpiry = getTokenExpiry(token)
 
         res.json({
             message: 'Login successful',
             token,
+            tokenExpiry: tokenExpiry?.toISOString(),
             user: user.toJSON()
         })
     } catch (error) {
@@ -205,7 +167,10 @@ export const login = async (req, res) => {
 // Get user profile
 export const getMe = async (req, res) => {
     try {
-        const user = await User.findById(req.user.id).select('-password')
+        const user = await User.findById(req.user.id)
+            .select('-password')
+            .populate('assignedRoom', 'name description')
+
         if (!user) {
             return res.status(404).json({ message: 'User not found' })
         }
@@ -221,6 +186,15 @@ export const getMe = async (req, res) => {
 export const changePassword = async (req, res) => {
     try {
         const { currentPassword, newPassword } = req.body
+
+        // Validate input
+        if (!currentPassword || !newPassword) {
+            return res.status(400).json({ message: 'Current password and new password are required' })
+        }
+
+        if (newPassword.length < 6) {
+            return res.status(400).json({ message: 'New password must be at least 6 characters long' })
+        }
 
         // Find user
         const user = await User.findById(req.user.id)
@@ -242,5 +216,48 @@ export const changePassword = async (req, res) => {
     } catch (error) {
         console.error('Change password error:', error)
         res.status(500).json({ message: 'Failed to change password' })
+    }
+}
+
+// Refresh token (optional endpoint for token renewal)
+export const refreshToken = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('-password')
+        if (!user || !user.isActive) {
+            return res.status(404).json({ message: 'User not found or inactive' })
+        }
+
+        // Generate new token
+        const token = generateToken(user)
+        const tokenExpiry = getTokenExpiry(token)
+
+        res.json({
+            message: 'Token refreshed successfully',
+            token,
+            tokenExpiry: tokenExpiry?.toISOString(),
+            user: user.toJSON()
+        })
+    } catch (error) {
+        console.error('Refresh token error:', error)
+        res.status(500).json({ message: 'Failed to refresh token' })
+    }
+}
+
+// Verify token validity (useful for frontend to check token status)
+export const verifyTokenValidity = async (req, res) => {
+    try {
+        const user = await User.findById(req.user.id).select('-password')
+        if (!user || !user.isActive) {
+            return res.status(401).json({ message: 'Invalid token' })
+        }
+
+        res.json({
+            valid: true,
+            user: user.toJSON(),
+            expiresAt: new Date(req.user.exp * 1000).toISOString()
+        })
+    } catch (error) {
+        console.error('Verify token error:', error)
+        res.status(500).json({ message: 'Failed to verify token' })
     }
 }
