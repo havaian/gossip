@@ -11,7 +11,7 @@ const app = createApp(App)
 const pinia = createPinia()
 
 // Socket.IO setup
-const socket = io(import.meta.env.VITE_SOCKET_URL || 'http://localhost:3000', {
+const socket = io('https://gossip.mun.uz', {
     autoConnect: false,
     reconnection: true,
     path: '/socket.io/',
