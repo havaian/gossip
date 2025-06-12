@@ -299,7 +299,7 @@ export const deleteRoom = async (req, res) => {
         await Message.deleteMany({ room: room._id })
 
         // Delete room
-        await room.remove()
+        await await Room.findByIdAndDelete(req.params.id)
 
         res.json({ message: 'Room deleted successfully' })
     } catch (error) {
