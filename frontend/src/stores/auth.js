@@ -2,12 +2,6 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 import { useRouter } from 'vue-router'
 
-// Debug environment variables
-console.log('Environment check:')
-console.log('VITE_API_URL:', import.meta.env.VITE_API_URL)
-console.log('VITE_SOCKET_URL:', import.meta.env.VITE_SOCKET_URL)
-console.log('All env vars:', import.meta.env)
-
 export const useAuthStore = defineStore('auth', {
     state: () => ({
         token: localStorage.getItem('token'),
@@ -22,13 +16,7 @@ export const useAuthStore = defineStore('auth', {
         
         // Add getter to check API URL
         apiUrl: () => {
-            const url = import.meta.env.VITE_API_URL
-            if (!url) {
-                console.error('VITE_API_URL is not defined!')
-                // Fallback URL
-                return 'https://gossip.mun.uz/api'
-            }
-            return url
+            return 'https://gossip.mun.uz/api'
         }
     },
 
