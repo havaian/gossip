@@ -186,27 +186,27 @@ export const createRoom = async (req, res) => {
     try {
         const { name, description } = req.body
 
-        // Create moderator
-        const moderator = new User({
-            name: `${name} Moderator`,
-            email: `moderator-${Date.now()}@anonymous.com`,
-            password: Math.random().toString(36).slice(-8),
-            role: 'moderator',
-            createdBy: req.user.id
-        })
+        // // Create moderator
+        // const moderator = new User({
+        //     name: `${name} Moderator`,
+        //     email: `moderator-${Date.now()}@anonymous.com`,
+        //     password: Math.random().toString(36).slice(-8),
+        //     role: 'moderator',
+        //     createdBy: req.user.id
+        // })
 
-        // Create presenter
-        const presenter = new User({
-            name: `${name} Presenter`,
-            email: `presenter-${Date.now()}@anonymous.com`,
-            password: Math.random().toString(36).slice(-8),
-            role: 'presenter',
-            createdBy: req.user.id
-        })
+        // // Create presenter
+        // const presenter = new User({
+        //     name: `${name} Presenter`,
+        //     email: `presenter-${Date.now()}@anonymous.com`,
+        //     password: Math.random().toString(36).slice(-8),
+        //     role: 'presenter',
+        //     createdBy: req.user.id
+        // })
 
-        // Save users
-        await moderator.save()
-        await presenter.save()
+        // // Save users
+        // await moderator.save()
+        // await presenter.save()
 
         // Create room
         const room = new Room({
@@ -220,18 +220,18 @@ export const createRoom = async (req, res) => {
         // Save room
         await room.save()
 
-        // Update user assignments
-        moderator.assignedRoom = room._id
-        presenter.assignedRoom = room._id
+        // // Update user assignments
+        // moderator.assignedRoom = room._id
+        // presenter.assignedRoom = room._id
 
-        await moderator.save()
-        await presenter.save()
+        // await moderator.save()
+        // await presenter.save()
 
         res.status(201).json({
             message: 'Room created successfully',
             room,
-            moderator: moderator.toJSON(),
-            presenter: presenter.toJSON()
+            // moderator: moderator.toJSON(),
+            // presenter: presenter.toJSON()
         })
     } catch (error) {
         console.error('Create room error:', error)
