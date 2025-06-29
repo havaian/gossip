@@ -1,25 +1,5 @@
 <template>
-    <div class="min-h-screen bg-gray-50">
-        <nav class="bg-white shadow">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex">
-                        <div class="flex-shrink-0 flex items-center">
-                            <a href='https://bolt.new/' target="_blank" rel="noopener noreferrer">
-                                <h1 class="text-xl font-bold text-gray-900">Gossip MUN</h1>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="flex items-center">
-                        <span class="text-gray-700 mr-4">{{ authStore.user.name }}</span>
-                        <button @click="handleLogout" class="btn btn-secondary">
-                            Logout
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </nav>
-
+    <div>
         <!-- Admin Dashboard -->
         <main v-if="authStore.isAdmin" class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
             <div class="px-4 py-6 sm:px-0">
@@ -125,10 +105,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
-import { useRouter } from 'vue-router'
 import axios from '../services/api'
 
-const router = useRouter()
 const authStore = useAuthStore()
 const rooms = ref([])
 const showCreateRoomModal = ref(false)
@@ -178,11 +156,6 @@ const deleteRoom = async (roomId) => {
     } catch (error) {
         alert(error.response?.data?.message || 'Failed to delete room')
     }
-}
-
-const handleLogout = () => {
-    authStore.logout()
-    router.push('/login')
 }
 
 onMounted(() => {

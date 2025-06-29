@@ -1,23 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <!-- Navigation -->
-    <nav class="bg-white shadow">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
-          <div class="flex">
-            <router-link to="/" class="flex-shrink-0 flex items-center">
-              <h1 class="text-xl font-bold text-gray-900">Gossip MUN</h1>
-            </router-link>
-          </div>
-          <div class="flex items-center space-x-4">
-            <span class="text-gray-700">Admin Dashboard</span>
-            <router-link to="/" class="btn btn-secondary">
-              Back to Home
-            </router-link>
-          </div>
-        </div>
-      </div>
-    </nav>
+  <div>
+    <!-- Use Shared Header -->
+    <Navbar show-back-button back-button-text="Back to Home" />
 
     <!-- Main Content -->
     <main class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
@@ -89,11 +73,6 @@
           <table class="min-w-full divide-y divide-gray-200">
             <thead class="bg-gray-50">
               <tr>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Description</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Moderator</th>
-                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Presenter</th>
                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
@@ -283,6 +262,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useAuthStore } from '../stores/auth'
+import Navbar from '../components/layout/Navbar.vue'
 import axios from '../services/api'
 
 const authStore = useAuthStore()

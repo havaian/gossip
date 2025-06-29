@@ -1,26 +1,13 @@
 <template>
-    <div class="min-h-screen bg-gray-50">
-        <!-- Navigation -->
-        <nav class="bg-white shadow">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex">
-                        <router-link to="/" class="flex-shrink-0 flex items-center">
-                            <h1 class="text-xl font-bold text-gray-900">Gossip MUN</h1>
-                        </router-link>
-                    </div>
-                    <div class="flex items-center space-x-4">
-                        <span class="text-gray-700">{{ room.name }}</span>
-                        <button @click="showQRModal = true" class="btn btn-primary">
-                            Show QR
-                        </button>
-                        <router-link to="/" class="btn btn-secondary">
-                            Back to Home
-                        </router-link>
-                    </div>
-                </div>
-            </div>
-        </nav>
+    <div>
+        <!-- Custom Header with Presenter Actions -->
+        <Navbar :room-name="room.name">
+            <template #actions>
+                <button @click="showQRModal = true" class="btn btn-primary">
+                    Show QR
+                </button>
+            </template>
+        </Navbar>
 
         <!-- Main Content - Full Screen Message Display -->
         <main class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8 flex flex-col items-center justify-center">
@@ -70,6 +57,7 @@
 import { ref, onMounted, inject } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '../stores/auth'
+import Navbar from '../components/layout/Navbar.vue'
 import QrcodeVue from 'qrcode.vue'
 import axios from '../services/api'
 
