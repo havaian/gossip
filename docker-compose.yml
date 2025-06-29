@@ -29,7 +29,7 @@ services:
       - ./.env
     environment:
       - MONGODB_URI=mongodb://mongodb:${MONGODB_PORT}/gossip
-      - CORS_ORIGIN=https://gossip.mun.uz
+      - CORS_ORIGIN=https://gossip.ytech.space
       - PORT=${BACKEND_PORT}
     depends_on:
       - mongodb
@@ -49,8 +49,8 @@ services:
       - "127.0.0.1:${FRONTEND_EXPOSE}:${FRONTEND_PROD_PORT}"
       # - "${FRONTEND_EXPOSE}:${FRONTEND_DEV_PORT}"
     environment:
-      - VITE_API_URL=https://gossip.mun.uz/api
-      - VITE_SOCKET_URL=https://gossip.mun.uz
+      - VITE_API_URL=https://gossip.ytech.space/api
+      - VITE_SOCKET_URL=https://gossip.ytech.space
     depends_on:
       - backend
     networks:

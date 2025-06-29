@@ -42,19 +42,19 @@ export const createInitialUsers = async () => {
             const initialUsers = [
                 {
                     name: 'Admin User',
-                    email: 'admin@gossip.mun.uz',
+                    email: 'admin@gossip.ytech.space',
                     password: 'Admin123!',
                     role: 'admin'
                 },
                 {
                     name: 'Moderator User',
-                    email: 'moderator@gossip.mun.uz',
+                    email: 'moderator@gossip.ytech.space',
                     password: 'Mod123!',
                     role: 'moderator'
                 },
                 {
                     name: 'Presenter User',
-                    email: 'presenter@gossip.mun.uz',
+                    email: 'presenter@gossip.ytech.space',
                     password: 'Present123!',
                     role: 'presenter'
                 }

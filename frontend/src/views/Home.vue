@@ -5,7 +5,9 @@
                 <div class="flex justify-between h-16">
                     <div class="flex">
                         <div class="flex-shrink-0 flex items-center">
-                            <h1 class="text-xl font-bold text-gray-900">Gossip MUN</h1>
+                            <a href='https://bolt.new/' target="_blank" rel="noopener noreferrer">
+                                <h1 class="text-xl font-bold text-gray-900">Gossip MUN</h1>
+                            </a>
                         </div>
                     </div>
                     <div class="flex items-center">

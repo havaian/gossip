@@ -11,7 +11,7 @@ const app = createApp(App)
 const pinia = createPinia()
 
 // Socket.IO setup
-const socket = io('https://gossip.mun.uz', {
+const socket = io('https://gossip.ytech.space', {
     autoConnect: false,
     reconnection: true,
     path: '/socket.io/',
