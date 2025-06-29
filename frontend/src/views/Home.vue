@@ -1,5 +1,8 @@
 <template>
     <div>
+        <!-- Use Shared Header -->
+        <Navbar />
+
         <!-- Admin Dashboard -->
         <main v-if="authStore.isAdmin" class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
             <div class="px-4 py-6 sm:px-0">
@@ -105,6 +108,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useAuthStore } from '../stores/auth'
+import Navbar from '../components/layout/Navbar.vue'
 import axios from '../services/api'
 
 const authStore = useAuthStore()

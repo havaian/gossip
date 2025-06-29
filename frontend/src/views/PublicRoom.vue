@@ -1,27 +1,7 @@
 <template>
     <div>
-        <!-- Simple header for public room -->
-        <nav class="bg-white shadow">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between h-16">
-                    <div class="flex items-center">
-                        <!-- Logo and Title -->
-                        <a href='https://bolt.new/' target="_blank" rel="noopener noreferrer" class="flex items-center space-x-3">
-                            <img src="/logo.png" alt="Gossip MUN Logo" class="w-24 h-24" />
-                            <div class="flex flex-col">
-                                <h1 class="text-xl font-bold text-gray-900">Gossip MUN</h1>
-                                <a href="/" class="text-sm text-gray-600 hover:text-gray-900">
-                                    gossip.ytech.space
-                                </a>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="flex items-center">
-                        <span class="text-gray-700">{{ room.name }}</span>
-                    </div>
-                </div>
-            </div>
-        </nav>
+        <!-- Use Shared Header -->
+        <Navbar show-back-button back-button-text="Back to Home" />
 
         <!-- Main Content -->
         <div class="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -60,6 +40,7 @@
 <script setup>
 import { ref, onMounted, inject } from 'vue'
 import { useRoute } from 'vue-router'
+import Navbar from '../components/layout/Navbar.vue'
 import axios from '../services/api'
 
 const route = useRoute()
